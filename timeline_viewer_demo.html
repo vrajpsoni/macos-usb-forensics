@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>USB Forensics Timeline Viewer</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: #f9fafb;
+      color: #111827;
+      padding: 32px 24px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    button { font-family: inherit; }
+    input:focus { border-color: #4f9cf9 !important; }
+  </style>
+</head>
+<body>
+  <div style="margin-bottom:28px;">
+    <h1 style="font-size:22px;font-weight:700;color:#111827;">
+      USB Forensics &mdash; Timeline Viewer
+    </h1>
+    <p style="font-size:13px;color:#6b7280;margin-top:4px;">
+      Source: <code>timeline_demo.csv</code> (sample data) &nbsp;&middot;&nbsp;
+      50 total rows &nbsp;&middot;&nbsp;
+      Generated: 2026-05-23 16:26:11
+    </p>
+  </div>
+
+  <div style="display:flex;flex-wrap:wrap;gap:12px;margin-bottom:24px;"><div style="flex:1;min-width:140px;border:1px solid #e5e7eb;border-radius:8px;padding:12px 16px;"><div style="font-size:11px;color:#6b7280;font-weight:600;text-transform:uppercase;letter-spacing:.05em;">disk_log</div><div style="font-size:24px;font-weight:700;color:#f97316;margin:4px 0;">10</div><div style="height:4px;background:#f3f4f6;border-radius:2px;margin-top:6px;"><div style="height:4px;background:#f97316;border-radius:2px;width:20.0%;"></div></div><div style="font-size:11px;color:#9ca3af;margin-top:4px;">20.0% of total</div></div><div style="flex:1;min-width:140px;border:1px solid #e5e7eb;border-radius:8px;padding:12px 16px;"><div style="font-size:11px;color:#6b7280;font-weight:600;text-transform:uppercase;letter-spacing:.05em;">file_metadata</div><div style="font-size:24px;font-weight:700;color:#22c55e;margin:4px 0;">10</div><div style="height:4px;background:#f3f4f6;border-radius:2px;margin-top:6px;"><div style="height:4px;background:#22c55e;border-radius:2px;width:20.0%;"></div></div><div style="font-size:11px;color:#9ca3af;margin-top:4px;">20.0% of total</div></div><div style="flex:1;min-width:140px;border:1px solid #e5e7eb;border-radius:8px;padding:12px 16px;"><div style="font-size:11px;color:#6b7280;font-weight:600;text-transform:uppercase;letter-spacing:.05em;">finder_prefs</div><div style="font-size:24px;font-weight:700;color:#f43f5e;margin:4px 0;">10</div><div style="height:4px;background:#f3f4f6;border-radius:2px;margin-top:6px;"><div style="height:4px;background:#f43f5e;border-radius:2px;width:20.0%;"></div></div><div style="font-size:11px;color:#9ca3af;margin-top:4px;">20.0% of total</div></div><div style="flex:1;min-width:140px;border:1px solid #e5e7eb;border-radius:8px;padding:12px 16px;"><div style="font-size:11px;color:#6b7280;font-weight:600;text-transform:uppercase;letter-spacing:.05em;">shell_history</div><div style="font-size:24px;font-weight:700;color:#a78bfa;margin:4px 0;">10</div><div style="height:4px;background:#f3f4f6;border-radius:2px;margin-top:6px;"><div style="height:4px;background:#a78bfa;border-radius:2px;width:20.0%;"></div></div><div style="font-size:11px;color:#9ca3af;margin-top:4px;">20.0% of total</div></div><div style="flex:1;min-width:140px;border:1px solid #e5e7eb;border-radius:8px;padding:12px 16px;"><div style="font-size:11px;color:#6b7280;font-weight:600;text-transform:uppercase;letter-spacing:.05em;">usb_log</div><div style="font-size:24px;font-weight:700;color:#4f9cf9;margin:4px 0;">10</div><div style="height:4px;background:#f3f4f6;border-radius:2px;margin-top:6px;"><div style="height:4px;background:#4f9cf9;border-radius:2px;width:20.0%;"></div></div><div style="font-size:11px;color:#9ca3af;margin-top:4px;">20.0% of total</div></div></div>
+
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
+    <h2 style="font-size:16px;font-weight:600;color:#374151;">Evidence by Source</h2>
+    <div style="display:flex;gap:8px;">
+      <button onclick="expandAll()"
+              style="padding:6px 14px;background:#fff;border:1px solid #d1d5db;
+                     border-radius:6px;font-size:12px;cursor:pointer;color:#374151;">
+        Expand all
+      </button>
+      <button onclick="collapseAll()"
+              style="padding:6px 14px;background:#fff;border:1px solid #d1d5db;
+                     border-radius:6px;font-size:12px;cursor:pointer;color:#374151;">
+        Collapse all
+      </button>
+    </div>
+  </div>
+
+  
+<div style="display:flex;align-items:center;gap:10px;margin-bottom:20px;">
+  <input
+    id="searchInput"
+    type="text"
+    placeholder="Filter by keyword across all sources..."
+    oninput="filterRows(this.value)"
+    style="flex:1;padding:8px 12px;border:1px solid #d1d5db;border-radius:6px;
+           font-size:13px;outline:none;"
+  />
+  <button onclick="document.getElementById('searchInput').value='';filterRows('')"
+          style="padding:8px 14px;background:#f3f4f6;border:1px solid #d1d5db;
+                 border-radius:6px;font-size:13px;cursor:pointer;color:#374151;">
+    Clear
+  </button>
+  <span id="matchCount" style="font-size:12px;color:#9ca3af;white-space:nowrap;"></span>
+</div>
+
+  
+<div style="margin-bottom:12px;border:1px solid #e5e7eb;border-radius:8px;overflow:hidden;">
+  <button
+    onclick="toggleSection('src_0', 'srcchev_0')"
+    style="width:100%;text-align:left;background:#fff;border:none;padding:14px 16px;
+           cursor:pointer;display:flex;align-items:center;gap:12px;"
+  >
+    <span id="srcchev_0"
+          style="font-size:12px;color:#f97316;transition:transform .15s;">&#9654;</span>
+    <span style="width:12px;height:12px;border-radius:3px;background:#f97316;
+                 flex-shrink:0;"></span>
+    <span style="flex:1;font-size:15px;font-weight:600;color:#111827;">disk_log</span>
+    <span style="background:#f9731622;color:#f97316;font-size:12px;
+                 padding:2px 10px;border-radius:12px;font-weight:700;">10 rows</span>
+    <span style="font-size:12px;color:#9ca3af;margin-left:4px;">
+      2 event types
+    </span>
+  </button>
+  <div id="src_0" style="display:none;padding:12px 16px 12px 16px;
+       border-top:1px solid #f3f4f6;">
+    
+<div style="margin-bottom:8px;">
+  <button
+    onclick="toggleSection('tbl_1', 'tog_1')"
+    style="width:100%;text-align:left;background:#f3f4f6;border:1px solid #e5e7eb;
+           border-radius:6px;padding:8px 12px;cursor:pointer;display:flex;
+           align-items:center;gap:8px;font-size:13px;font-weight:500;color:#374151;"
+  >
+    <span id="tog_1" style="font-size:10px;transition:transform .15s;">&#9654;</span>
+    <span style="flex:1;">VOLUME_MOUNT</span>
+    <span style="background:#e5e7eb;color:#6b7280;font-size:11px;
+                 padding:1px 8px;border-radius:10px;font-weight:600;">5</span>
+  </button>
+  <div id="tbl_1" style="display:none;margin-top:4px;border:1px solid #e5e7eb;
+       border-radius:0 0 6px 6px;overflow:hidden;">
+    <div style="overflow-x:auto;"><table style="width:100%;border-collapse:collapse;font-size:13px;"><thead><tr><th style="width:40px;text-align:center;white-space:nowrap;padding:6px 10px;border-bottom:2px solid #e5e7eb;font-size:12px;color:#6b7280;font-weight:600;">#</th><th style="width:190px;text-align:left;white-space:nowrap;padding:6px 10px;border-bottom:2px solid #e5e7eb;font-size:12px;color:#6b7280;font-weight:600;">Timestamp</th><th style="width:200px;text-align:left;white-space:nowrap;padding:6px 10px;border-bottom:2px solid #e5e7eb;font-size:12px;color:#6b7280;font-weight:600;">Event Type</th><th style="width:auto;text-align:left;white-space:nowrap;padding:6px 10px;border-bottom:2px solid #e5e7eb;font-size:12px;color:#6b7280;font-weight:600;">Detail</th><th style="width:90px;text-align:center;white-space:nowrap;padding:6px 10px;border-bottom:2px solid #e5e7eb;font-size:12px;color:#6b7280;font-weight:600;">Confidence</th></tr></thead><tbody><tr style="background:#ffffff;"><td style="text-align:center;padding:5px 10px;font-size:12px;color:#9ca3af;">1</td><td style="padding:5px 10px;font-size:12px;font-family:monospace;white-space:nowrap;color:#374151;">2026-04-10T10:02:13-0400</td><td style="padding:5px 10px;font-size:12px;white-space:nowrap;color:#374151;">VOLUME_MOUNT</td><td style="padding:5px 10px;font-size:12px;color:#374151;word-break:break-word;max-width:500px;">Mounting /Volumes/KINGSTON (FAT32, external)</td><td style="padding:5px 10px;text-align:center;"><span style="background:#dcfce7;color:#166534;font-size:11px;padding:1px 6px;border-radius:10px;font-weight:600;">high</span></td></tr><tr style="background:#f9fafb;"><td style="text-align:center;padding:5px 10px;font-size:12px;color:#9ca3af;">2</td><td style="padding:5px 10px;font-size:12px;font-family:monospace;white-space:nowrap;color:#374151;">2026-04-10T10:02:13-0400</td><td style="padding:5px 10px;font-size:12px;white-space:nowrap;color:#374151;">VOLUME_MOUNT</td><td style="padding:5px 10px;font-size:12px;color:#374151;word-break:break-word;max-width:500px;">DA: volume KINGSTON mount completed</td><td style="padding:5px 10px;text-align:center;"><span style="background:#dcfce7;color:#166534;font-size:11px;padding:1px 6px;border-radius:10px;font-weight:600;">high</span></td></tr><tr style="background:#ffffff;"><td style="text-align:center;padding:5px 10px;font-size:12px;color:#9ca3af;">3</td><td style="padding:5px 10px;font-size:12px;font-family:monospace;white-space:nowrap;color:#374151;">2026-04-10T10:04:55-0400</td><td style="padding:5px 10px;font-size:12px;white-space:nowrap;color:#374151;">VOLUME_MOUNT</td><td style="padding:5px 10px;font-size:12px;color:#374151;word-break:break-word;max-width:500px;">I/O activity on external volume KINGSTON</td><td style="padding:5px 10px;text-align:center;"><span style="background:#dcfce7;color:#166534;font-size:11px;padding:1px 6px;border-radius:10px;font-weight:600;">high</span></td></tr><tr style="background:#f9fafb;"><td style="text-align:center;padding:5px 10px;font-size:12px;color:#9ca3af;">4</td><td style="padding:5px 10px;font-size:12px;font-family:monospace;white-space:nowrap;color:#374151;">2026-04-10T10:05:00-0400</td><td style="padding:5px 10px;font-size:12px;white-space:nowrap;color:#374151;">VOLUME_MOUNT</td><td style="padding:5px 10px;font-size:12px;color:#374151;word-break:break-word;max-width:500px;">Write operations to /Volumes/KINGSTON</td><td style="padding:5px 10px;text-align:center;"><span style="background:#dcfce7;color:#166534;font-size:11px;padding:1px 6px;border-radius:10px;font-weight:600;">high</span></td></tr><tr style="background:#ffffff;"><td style="text-align:center;padding:5px 10px;font-size:12px;color:#9ca3af;">5</td><td style="padding:5px 10px;font-size:12px;font-family:monospace;white-space:nowrap;color:#374151;">2026-04-10T10:05:25-0400</td><td style="padding:5px 10px;font-size:12px;white-space:nowrap;color:#374151;">VOLUME_MOUNT</td><td style="padding:5px 10px;font-size:12px;color:#374151;word-break:break-word;max-width:500px;">Copy transaction in progress on KINGSTON</td><td style="padding:5px 10px;text-align:center;"><span style="background:#dcfce7;color:#166534;font-size:11px;padding:1px 6px;border-radius:10px;font-weight:600;">high</span></td></tr></tbody></table></div>
+  </div>
+</div>
+
+
+<div style="margin-bottom:8px;">
+  <button
+    onclick="toggleSection('tbl_2', 'tog_2')"
+    style="width:100%;text-align:left;background:#f3f4f6;border:1px solid #e5e7eb;
+           border-radius:6px;padding:8px 12px;cursor:pointer;display:flex;
+           align-items:center;gap:8px;font-size:13px;font-weight:500;color:#374151;"
+  >
+    <span id="tog_2" style="font-size:10px;transition:transform .15s;">&#9654;</span>
+    <span style="flex:1;">VOLUME_UNMOUNT</span>
+    <span style="background:#e5e7eb;color:#6b7280;font-size:11px;
+                 padding:1px 8px;border-radius:10px;font-weight:600;">5</span>
+  </button>
+  <div id="tbl_2" style="display:none;margin-top:4px;border:1px solid #e5e7eb;
+       border-radius:0 0 6px 6px;overflow:hidden;">
+    <div style="overflow-x:auto;"><table style="width:100%;border-collapse:collapse;font-size:13px;"><thead><tr><th style="width:40px;text-align:center;white-space:nowrap;padding:6px 10px;border-bottom:2px solid #e5e7eb;font-size:12px;color:#6b7280;font-weight:600;">#</th><th style="width:190px;text-align:left;white-space:nowrap;padding:6px 10px;border-bottom:2px solid #e5e7eb;font-size:12px;color:#6b7280;font-weight:600;">Timestamp</th><th style="width:200px;text-align:left;white-space:nowrap;padding:6px 10px;border-bottom:2px solid #e5e7eb;font-size:12px;color:#6b7280;font-weight:600;">Event Type</th><th style="width:auto;text-align:left;white-space:nowrap;padding:6px 10px;border-bottom:2px solid #e5e7eb;font-size:12px;color:#6b7280;font-weight:600;">Detail</th><th style="width:90px;text-align:center;white-space:nowrap;padding:6px 10px;border-bottom:2px solid #e5e7eb;font-size:12px;color:#6b7280;font-weight:600;">Confidence</th></tr></thead><tbody><tr style="background:#ffffff;"><td style="text-align:center;padding:5px 10px;font-size:12px;color:#9ca3af;">1</td><td style="padding:5px 10px;font-size:12px;font-family:monospace;white-space:nowrap;color:#374151;">2026-04-10T10:28:35-0400</td><td style="padding:5px 10px;font-size:12px;white-space:nowrap;color:#374151;">VOLUME_UNMOUNT</td><td style="padding:5px 10px;font-size:12px;color:#374151;word-break:break-word;max-width:500px;">Unmount request received for /Volumes/KINGSTON</td><td style="padding:5px 10px;text-align:center;"><span style="background:#dcfce7;color:#166534;font-size:11px;padding:1px 6px;border-radius:10px;font-weight:600;">high</span></td></tr><tr style="background:#f9fafb;"><td style="text-align:center;padding:5px 10px;font-size:12px;color:#9ca3af;">2</td><td style="padding:5px 10px;font-size:12px;font-family:monospace;white-space:nowrap;color:#374151;">2026-04-10T10:28:38-0400</td><td style="padding:5px 10px;font-size:12px;white-space:nowrap;color:#374151;">VOLUME_UNMOUNT</td><td style="padding:5px 10px;font-size:12px;color:#374151;word-break:break-word;max-width:500px;">Flushing buffers for KINGSTON</td><td style="padding:5px 10px;text-align:center;"><span style="background:#dcfce7;color:#166534;font-size:11px;padding:1px 6px;border-radius:10px;font-weight:600;">high</span></td></tr><tr style="background:#ffffff;"><td style="text-align:center;padding:5px 10px;font-size:12px;color:#9ca3af;">3</td><td style="padding:5px 10px;font-size:12px;font-family:monospace;white-space:nowrap;color:#374151;">2026-04-10T10:28:40-0400</td><td style="padding:5px 10px;font-size:12px;white-space:nowrap;color:#374151;">VOLUME_UNMOUNT</td><td style="padding:5px 10px;font-size:12px;color:#374151;word-break:break-word;max-width:500px;">/Volumes/KINGSTON unmounted successfully</td><td style="padding:5px 10px;text-align:center;"><span style="background:#dcfce7;color:#166534;font-size:11px;padding:1px 6px;border-radius:10px;font-weight:600;">high</span></td></tr><tr style="background:#f9fafb;"><td style="text-align:center;padding:5px 10px;font-size:12px;color:#9ca3af;">4</td><td style="padding:5px 10px;font-size:12px;font-family:monospace;white-space:nowrap;color:#374151;">2026-04-10T10:28:41-0400</td><td style="padding:5px 10px;font-size:12px;white-space:nowrap;color:#374151;">VOLUME_UNMOUNT</td><td style="padding:5px 10px;font-size:12px;color:#374151;word-break:break-word;max-width:500px;">External disk KINGSTON ejected</td><td style="padding:5px 10px;text-align:center;"><span style="background:#dcfce7;color:#166534;font-size:11px;padding:1px 6px;border-radius:10px;font-weight:600;">high</span></td></tr><tr style="background:#ffffff;"><td style="text-align:center;padding:5px 10px;font-size:12px;color:#9ca3af;">5</td><td style="padding:5px 10px;font-size:12px;font-family:monospace;white-space:nowrap;color:#374151;">2026-04-10T10:28:42-0400</td><td style="padding:5px 10px;font-size:12px;white-space:nowrap;color:#374151;">VOLUME_UNMOUNT</td><td style="padding:5px 10px;font-size:12px;color:#374151;word-break:break-word;max-width:500px;">DA: volume KINGSTON no longer accessible</td><td style="padding:5px 10px;text-align:center;"><span style="background:#dcfce7;color:#166534;font-size:11px;padding:1px 6px;border-radius:10px;font-weight:600;">high</span></td></tr></tbody></table></div>
+  </div>
+</div>
+
+  </div>
+</div>
+
+
+<div style="margin-bottom:12px;border:1px solid #e5e7eb;border-radius:8px;overflow:hidden;">
+  <button
+    onclick="toggleSection('src_1', 'srcchev_1')"
+    style="width:100%;text-align:left;background:#fff;border:none;padding:14px 16px;
+           cursor:pointer;display:flex;align-items:center;gap:12px;"
+  >
+    <span id="srcchev_1"
+          style="font-size:12px;color:#22c55e;transition:transform .15s;">&#9654;</span>
+    <span style="width:12px;height:12px;border-radius:3px;background:#22c55e;
+                 flex-shrink:0;"></span>
+    <span style="flex:1;font-size:15px;font-weight:600;color:#111827;">file_metadata</span>
+    <span style="background:#22c55e22;color:#22c55e;font-size:12px;
+                 padding:2px 10px;border-radius:12px;font-weight:700;">10 rows</span>
+    <span style="font-size:12px;color:#9ca3af;margin-left:4px;">
+      3 event types
+    </span>
+  </button>
+  <div id="src_1" style="display:none;padding:12px 16px 12px 16px;
+       border-top:1px solid #f3f4f6;">
+    
+<div style="margin-bottom:8px;">
+  <button
+    onclick="toggleSection('tbl_3', 'tog_3')"
+    style="width:100%;text-align:left;background:#f3f4f6;border:1px solid #e5e7eb;
+           border-radius:6px;padding:8px 12px;cursor:pointer;display:flex;
+           align-items:center;gap:8px;font-size:13px;font-weight:500;color:#374151;"
+  >
+    <span id="tog_3" style="font-size:10px;transition:transform .15s;">&#9654;</span>
+    <span style="flex:1;">FILE_ACCESSED</span>
+    <span style="background:#e5e7eb;color:#6b7280;font-size:11px;
+                 padding:1px 8px;border-radius:10px;font-weight:600;">6</span>
+  </button>
+  <div id="tbl_3" style="display:none;margin-top:4px;border:1px solid #e5e7eb;
+       border-radius:0 0 6px 6px;overflow:hidden;">
+    <div style="overflow-x:auto;"><table style="width:100%;border-collapse:collapse;font-size:13px;"><thead><tr><th style="width:40px;text-align:center;white-space:nowrap;padding:6px 10px;border-bottom:2px solid #e5e7eb;font-size:12px;color:#6b7280;font-weight:600;">#</th><th style="width:190px;text-align:left;white-space:nowrap;padding:6px 10px;border-bottom:2px solid #e5e7eb;font-size:12px;color:#6b7280;font-weight:600;">Timestamp</th><th style="width:200px;text-align:left;white-space:nowrap;padding:6px 10px;border-bottom:2px solid #e5e7eb;font-size:12px;color:#6b7280;font-weight:600;">Event Type</th><th style="width:auto;text-align:left;white-space:nowrap;padding:6px 10px;border-bottom:2px solid #e5e7eb;font-size:12px;color:#6b7280;font-weight:600;">Detail</th><th style="width:90px;text-align:center;white-space:nowrap;padding:6px 10px;border-bottom:2px solid #e5e7eb;font-size:12px;color:#6b7280;font-weight:600;">Confidence</th></tr></thead><tbody><tr style="background:#ffffff;"><td style="text-align:center;padding:5px 10px;font-size:12px;color:#9ca3af;">1</td><td style="padding:5px 10px;font-size:12px;font-family:monospace;white-space:nowrap;color:#374151;">2026-04-10T10:05:18-0400</td><td style="padding:5px 10px;font-size:12px;white-space:nowrap;color:#374151;">FILE_ACCESSED</td><td style="padding:5px 10px;font-size:12px;color:#374151;word-break:break-word;max-width:500px;">Financial_Aid_Award_Spring2026.xlsx</td><td style="padding:5px 10px;text-align:center;"><span style="background:#dcfce7;color:#166534;font-size:11px;padding:1px 6px;border-radius:10px;font-weight:600;">high</span></td></tr><tr style="background:#f9fafb;"><td style="text-align:center;padding:5px 10px;font-size:12px;color:#9ca3af;">2</td><td style="padding:5px 10px;font-size:12px;font-family:monospace;white-space:nowrap;color:#374151;">2026-04-10T10:05:20-0400</td><td style="padding:5px 10px;font-size:12px;white-space:nowrap;color:#374151;">FILE_ACCESSED</td><td style="padding:5px 10px;font-size:12px;color:#374151;word-break:break-word;max-width:500px;">UMass_Transcript_Spring2026_UNOFFICIAL.csv</td><td style="padding:5px 10px;text-align:center;"><span style="background:#dcfce7;color:#166534;font-size:11px;padding:1px 6px;border-radius:10px;font-weight:600;">high</span></td></tr><tr style="background:#ffffff;"><td style="text-align:center;padding:5px 10px;font-size:12px;color:#9ca3af;">3</td><td style="padding:5px 10px;font-size:12px;font-family:monospace;white-space:nowrap;color:#374151;">2026-04-10T10:05:21-0400</td><td style="padding:5px 10px;font-size:12px;white-space:nowrap;color:#374151;">FILE_ACCESSED</td><td style="padding:5px 10px;font-size:12px;color:#374151;word-break:break-word;max-width:500px;">Official_Transcript_UMass_CONFIDENTIAL.pdf</td><td style="padding:5px 10px;text-align:center;"><span style="background:#dcfce7;color:#166534;font-size:11px;padding:1px 6px;border-radius:10px;font-weight:600;">high</span></td></tr><tr style="background:#f9fafb;"><td style="text-align:center;padding:5px 10px;font-size:12px;color:#9ca3af;">4</td><td style="padding:5px 10px;font-size:12px;font-family:monospace;white-space:nowrap;color:#374151;">2026-04-10T10:05:22-0400</td><td style="padding:5px 10px;font-size:12px;white-space:nowrap;color:#374151;">FILE_ACCESSED</td><td style="padding:5px 10px;font-size:12px;color:#374151;word-break:break-word;max-width:500px;">CS480_FinalProject_Draft_v3.pdf</td><td style="padding:5px 10px;text-align:center;"><span style="background:#dcfce7;color:#166534;font-size:11px;padding:1px 6px;border-radius:10px;font-weight:600;">high</span></td></tr><tr style="background:#ffffff;"><td style="text-align:center;padding:5px 10px;font-size:12px;color:#9ca3af;">5</td><td style="padding:5px 10px;font-size:12px;font-family:monospace;white-space:nowrap;color:#374151;">2026-04-10T10:05:23-0400</td><td style="padding:5px 10px;font-size:12px;white-space:nowrap;color:#374151;">FILE_ACCESSED</td><td style="padding:5px 10px;font-size:12px;color:#374151;word-break:break-word;max-width:500px;">Research_Thesis_Raw_Data.csv</td><td style="padding:5px 10px;text-align:center;"><span style="background:#dcfce7;color:#166534;font-size:11px;padding:1px 6px;border-radius:10px;font-weight:600;">high</span></td></tr><tr style="background:#f9fafb;"><td style="text-align:center;padding:5px 10px;font-size:12px;color:#9ca3af;">6</td><td style="padding:5px 10px;font-size:12px;font-family:monospace;white-space:nowrap;color:#374151;">2026-04-10T10:05:25-0400</td><td style="padding:5px 10px;font-size:12px;white-space:nowrap;color:#374151;">FILE_ACCESSED</td><td style="padding:5px 10px;font-size:12px;color:#374151;word-break:break-word;max-width:500px;">README_PRIVATE_DO_NOT_COPY.txt</td><td style="padding:5px 10px;text-align:center;"><span style="background:#dcfce7;color:#166534;font-size:11px;padding:1px 6px;border-radius:10px;font-weight:600;">high</span></td></tr></tbody></table></div>
+  </div>
+</div>
+
+
+<div style="margin-bottom:8px;">
+  <button
+    onclick="toggleSection('tbl_4', 'tog_4')"
+    style="width:100%;text-align:left;background:#f3f4f6;border:1px solid #e5e7eb;
+           border-radius:6px;padding:8px 12px;cursor:pointer;display:flex;
+           align-items:center;gap:8px;font-size:13px;font-weight:500;color:#374151;"
+  >
+    <span id="tog_4" style="font-size:10px;transition:transform .15s;">&#9654;</span>
+    <span style="flex:1;">FILE_CREATED</span>
+    <span style="background:#e5e7eb;color:#6b7280;font-size:11px;
+                 padding:1px 8px;border-radius:10px;font-weight:600;">3</span>
+  </button>
+  <div id="tbl_4" style="display:none;margin-top:4px;border:1px solid #e5e7eb;
+       border-radius:0 0 6px 6px;overflow:hidden;">
+    <div style="overflow-x:auto;"><table style="width:100%;border-collapse:collapse;font-size:13px;"><thead><tr><th style="width:40px;text-align:center;white-space:nowrap;padding:6px 10px;border-bottom:2px solid #e5e7eb;font-size:12px;color:#6b7280;font-weight:600;">#</th><th style="width:190px;text-align:left;white-space:nowrap;padding:6px 10px;border-bottom:2px solid #e5e7eb;font-size:12px;color:#6b7280;font-weight:600;">Timestamp</th><th style="width:200px;text-align:left;white-space:nowrap;padding:6px 10px;border-bottom:2px solid #e5e7eb;font-size:12px;color:#6b7280;font-weight:600;">Event Type</th><th style="width:auto;text-align:left;white-space:nowrap;padding:6px 10px;border-bottom:2px solid #e5e7eb;font-size:12px;color:#6b7280;font-weight:600;">Detail</th><th style="width:90px;text-align:center;white-space:nowrap;padding:6px 10px;border-bottom:2px solid #e5e7eb;font-size:12px;color:#6b7280;font-weight:600;">Confidence</th></tr></thead><tbody><tr style="background:#ffffff;"><td style="text-align:center;padding:5px 10px;font-size:12px;color:#9ca3af;">1</td><td style="padding:5px 10px;font-size:12px;font-family:monospace;white-space:nowrap;color:#374151;">2026-04-10T10:00:00-0400</td><td style="padding:5px 10px;font-size:12px;white-space:nowrap;color:#374151;">FILE_CREATED</td><td style="padding:5px 10px;font-size:12px;color:#374151;word-break:break-word;max-width:500px;">Financial_Aid_Award_Spring2026.xlsx</td><td style="padding:5px 10px;text-align:center;"><span style="background:#dcfce7;color:#166534;font-size:11px;padding:1px 6px;border-radius:10px;font-weight:600;">high</span></td></tr><tr style="background:#f9fafb;"><td style="text-align:center;padding:5px 10px;font-size:12px;color:#9ca3af;">2</td><td style="padding:5px 10px;font-size:12px;font-family:monospace;white-space:nowrap;color:#374151;">2026-04-10T10:00:01-0400</td><td style="padding:5px 10px;font-size:12px;white-space:nowrap;color:#374151;">FILE_CREATED</td><td style="padding:5px 10px;font-size:12px;color:#374151;word-break:break-word;max-width:500px;">UMass_Transcript_Spring2026_UNOFFICIAL.csv</td><td style="padding:5px 10px;text-align:center;"><span style="background:#dcfce7;color:#166534;font-size:11px;padding:1px 6px;border-radius:10px;font-weight:600;">high</span></td></tr><tr style="background:#ffffff;"><td style="text-align:center;padding:5px 10px;font-size:12px;color:#9ca3af;">3</td><td style="padding:5px 10px;font-size:12px;font-family:monospace;white-space:nowrap;color:#374151;">2026-04-10T10:00:02-0400</td><td style="padding:5px 10px;font-size:12px;white-space:nowrap;color:#374151;">FILE_CREATED</td><td style="padding:5px 10px;font-size:12px;color:#374151;word-break:break-word;max-width:500px;">Official_Transcript_UMass_CONFIDENTIAL.pdf</td><td style="padding:5px 10px;text-align:center;"><span style="background:#dcfce7;color:#166534;font-size:11px;padding:1px 6px;border-radius:10px;font-weight:600;">high</span></td></tr></tbody></table></div>
+  </div>
+</div>
+
+
+<div style="margin-bottom:8px;">
+  <button
+    onclick="toggleSection('tbl_5', 'tog_5')"
+    style="width:100%;text-align:left;background:#f3f4f6;border:1px solid #e5e7eb;
+           border-radius:6px;padding:8px 12px;cursor:pointer;display:flex;
+           align-items:center;gap:8px;font-size:13px;font-weight:500;color:#374151;"
+  >
+    <span id="tog_5" style="font-size:10px;transition:transform .15s;">&#9654;</span>
+    <span style="flex:1;">FILE_MODIFIED</span>
+    <span style="background:#e5e7eb;color:#6b7280;font-size:11px;
+                 padding:1px 8px;border-radius:10px;font-weight:600;">1</span>
+  </button>
+  <div id="tbl_5" style="display:none;margin-top:4px;border:1px solid #e5e7eb;
+       border-radius:0 0 6px 6px;overflow:hidden;">
+    <div style="overflow-x:auto;"><table style="width:100%;border-collapse:collapse;font-size:13px;"><thead><tr><th style="width:40px;text-align:center;white-space:nowrap;padding:6px 10px;border-bottom:2px solid #e5e7eb;font-size:12px;color:#6b7280;font-weight:600;">#</th><th style="width:190px;text-align:left;white-space:nowrap;padding:6px 10px;border-bottom:2px solid #e5e7eb;font-size:12px;color:#6b7280;font-weight:600;">Timestamp</th><th style="width:200px;text-align:left;white-space:nowrap;padding:6px 10px;border-bottom:2px solid #e5e7eb;font-size:12px;color:#6b7280;font-weight:600;">Event Type</th><th style="width:auto;text-align:left;white-space:nowrap;padding:6px 10px;border-bottom:2px solid #e5e7eb;font-size:12px;color:#6b7280;font-weight:600;">Detail</th><th style="width:90px;text-align:center;white-space:nowrap;padding:6px 10px;border-bottom:2px solid #e5e7eb;font-size:12px;color:#6b7280;font-weight:600;">Confidence</th></tr></thead><tbody><tr style="background:#ffffff;"><td style="text-align:center;padding:5px 10px;font-size:12px;color:#9ca3af;">1</td><td style="padding:5px 10px;font-size:12px;font-family:monospace;white-space:nowrap;color:#374151;">2026-04-10T10:00:03-0400</td><td style="padding:5px 10px;font-size:12px;white-space:nowrap;color:#374151;">FILE_MODIFIED</td><td style="padding:5px 10px;font-size:12px;color:#374151;word-break:break-word;max-width:500px;">CS480_FinalProject_Draft_v3.pdf</td><td style="padding:5px 10px;text-align:center;"><span style="background:#dcfce7;color:#166534;font-size:11px;padding:1px 6px;border-radius:10px;font-weight:600;">high</span></td></tr></tbody></table></div>
+  </div>
+</div>
+
+  </div>
+</div>
+
+
+<div style="margin-bottom:12px;border:1px solid #e5e7eb;border-radius:8px;overflow:hidden;">
+  <button
+    onclick="toggleSection('src_2', 'srcchev_2')"
+    style="width:100%;text-align:left;background:#fff;border:none;padding:14px 16px;
+           cursor:pointer;display:flex;align-items:center;gap:12px;"
+  >
+    <span id="srcchev_2"
+          style="font-size:12px;color:#f43f5e;transition:transform .15s;">&#9654;</span>
+    <span style="width:12px;height:12px;border-radius:3px;background:#f43f5e;
+                 flex-shrink:0;"></span>
+    <span style="flex:1;font-size:15px;font-weight:600;color:#111827;">finder_prefs</span>
+    <span style="background:#f43f5e22;color:#f43f5e;font-size:12px;
+                 padding:2px 10px;border-radius:12px;font-weight:700;">10 rows</span>
+    <span style="font-size:12px;color:#9ca3af;margin-left:4px;">
+      1 event type
+    </span>
+  </button>
+  <div id="src_2" style="display:none;padding:12px 16px 12px 16px;
+       border-top:1px solid #f3f4f6;">
+    
+<div style="margin-bottom:8px;">
+  <button
+    onclick="toggleSection('tbl_6', 'tog_6')"
+    style="width:100%;text-align:left;background:#f3f4f6;border:1px solid #e5e7eb;
+           border-radius:6px;padding:8px 12px;cursor:pointer;display:flex;
+           align-items:center;gap:8px;font-size:13px;font-weight:500;color:#374151;"
+  >
+    <span id="tog_6" style="font-size:10px;transition:transform .15s;">&#9654;</span>
+    <span style="flex:1;">FINDER_DESTINATION_RECORDED</span>
+    <span style="background:#e5e7eb;color:#6b7280;font-size:11px;
+                 padding:1px 8px;border-radius:10px;font-weight:600;">10</span>
+  </button>
+  <div id="tbl_6" style="display:none;margin-top:4px;border:1px solid #e5e7eb;
+       border-radius:0 0 6px 6px;overflow:hidden;">
+    <div style="overflow-x:auto;"><table style="width:100%;border-collapse:collapse;font-size:13px;"><thead><tr><th style="width:40px;text-align:center;white-space:nowrap;padding:6px 10px;border-bottom:2px solid #e5e7eb;font-size:12px;color:#6b7280;font-weight:600;">#</th><th style="width:190px;text-align:left;white-space:nowrap;padding:6px 10px;border-bottom:2px solid #e5e7eb;font-size:12px;color:#6b7280;font-weight:600;">Timestamp</th><th style="width:200px;text-align:left;white-space:nowrap;padding:6px 10px;border-bottom:2px solid #e5e7eb;font-size:12px;color:#6b7280;font-weight:600;">Event Type</th><th style="width:auto;text-align:left;white-space:nowrap;padding:6px 10px;border-bottom:2px solid #e5e7eb;font-size:12px;color:#6b7280;font-weight:600;">Detail</th><th style="width:90px;text-align:center;white-space:nowrap;padding:6px 10px;border-bottom:2px solid #e5e7eb;font-size:12px;color:#6b7280;font-weight:600;">Confidence</th></tr></thead><tbody><tr style="background:#ffffff;"><td style="text-align:center;padding:5px 10px;font-size:12px;color:#9ca3af;">1</td><td style="padding:5px 10px;font-size:12px;font-family:monospace;white-space:nowrap;color:#374151;">TIMESTAMP_UNKNOWN</td><td style="padding:5px 10px;font-size:12px;white-space:nowrap;color:#374151;">FINDER_DESTINATION_RECORDED</td><td style="padding:5px 10px;font-size:12px;color:#374151;word-break:break-word;max-width:500px;">file:///Volumes/KINGSTON/</td><td style="padding:5px 10px;text-align:center;"><span style="background:#dcfce7;color:#166534;font-size:11px;padding:1px 6px;border-radius:10px;font-weight:600;">high</span></td></tr><tr style="background:#f9fafb;"><td style="text-align:center;padding:5px 10px;font-size:12px;color:#9ca3af;">2</td><td style="padding:5px 10px;font-size:12px;font-family:monospace;white-space:nowrap;color:#374151;">TIMESTAMP_UNKNOWN</td><td style="padding:5px 10px;font-size:12px;white-space:nowrap;color:#374151;">FINDER_DESTINATION_RECORDED</td><td style="padding:5px 10px;font-size:12px;color:#374151;word-break:break-word;max-width:500px;">file:///Users/student/Desktop/</td><td style="padding:5px 10px;text-align:center;"><span style="background:#dcfce7;color:#166534;font-size:11px;padding:1px 6px;border-radius:10px;font-weight:600;">high</span></td></tr><tr style="background:#ffffff;"><td style="text-align:center;padding:5px 10px;font-size:12px;color:#9ca3af;">3</td><td style="padding:5px 10px;font-size:12px;font-family:monospace;white-space:nowrap;color:#374151;">TIMESTAMP_UNKNOWN</td><td style="padding:5px 10px;font-size:12px;white-space:nowrap;color:#374151;">FINDER_DESTINATION_RECORDED</td><td style="padding:5px 10px;font-size:12px;color:#374151;word-break:break-word;max-width:500px;">file:///Users/student/Desktop/UMass_Confidential/</td><td style="padding:5px 10px;text-align:center;"><span style="background:#dcfce7;color:#166534;font-size:11px;padding:1px 6px;border-radius:10px;font-weight:600;">high</span></td></tr><tr style="background:#f9fafb;"><td style="text-align:center;padding:5px 10px;font-size:12px;color:#9ca3af;">4</td><td style="padding:5px 10px;font-size:12px;font-family:monospace;white-space:nowrap;color:#374151;">TIMESTAMP_UNKNOWN</td><td style="padding:5px 10px;font-size:12px;white-space:nowrap;color:#374151;">FINDER_DESTINATION_RECORDED</td><td style="padding:5px 10px;font-size:12px;color:#374151;word-break:break-word;max-width:500px;">file:///Volumes/KINGSTON/UMass_Confidential/</td><td style="padding:5px 10px;text-align:center;"><span style="background:#dcfce7;color:#166534;font-size:11px;padding:1px 6px;border-radius:10px;font-weight:600;">high</span></td></tr><tr style="background:#ffffff;"><td style="text-align:center;padding:5px 10px;font-size:12px;color:#9ca3af;">5</td><td style="padding:5px 10px;font-size:12px;font-family:monospace;white-space:nowrap;color:#374151;">TIMESTAMP_UNKNOWN</td><td style="padding:5px 10px;font-size:12px;white-space:nowrap;color:#374151;">FINDER_DESTINATION_RECORDED</td><td style="padding:5px 10px;font-size:12px;color:#374151;word-break:break-word;max-width:500px;">file:///Users/student/Documents/</td><td style="padding:5px 10px;text-align:center;"><span style="background:#dcfce7;color:#166534;font-size:11px;padding:1px 6px;border-radius:10px;font-weight:600;">high</span></td></tr><tr style="background:#f9fafb;"><td style="text-align:center;padding:5px 10px;font-size:12px;color:#9ca3af;">6</td><td style="padding:5px 10px;font-size:12px;font-family:monospace;white-space:nowrap;color:#374151;">TIMESTAMP_UNKNOWN</td><td style="padding:5px 10px;font-size:12px;white-space:nowrap;color:#374151;">FINDER_DESTINATION_RECORDED</td><td style="padding:5px 10px;font-size:12px;color:#374151;word-break:break-word;max-width:500px;">file:///Users/student/Downloads/</td><td style="padding:5px 10px;text-align:center;"><span style="background:#dcfce7;color:#166534;font-size:11px;padding:1px 6px;border-radius:10px;font-weight:600;">high</span></td></tr><tr style="background:#ffffff;"><td style="text-align:center;padding:5px 10px;font-size:12px;color:#9ca3af;">7</td><td style="padding:5px 10px;font-size:12px;font-family:monospace;white-space:nowrap;color:#374151;">TIMESTAMP_UNKNOWN</td><td style="padding:5px 10px;font-size:12px;white-space:nowrap;color:#374151;">FINDER_DESTINATION_RECORDED</td><td style="padding:5px 10px;font-size:12px;color:#374151;word-break:break-word;max-width:500px;">file:///Volumes/KINGSTON/UMass_Confidential/Financial_Aid_Award_Spring2026.xlsx</td><td style="padding:5px 10px;text-align:center;"><span style="background:#dcfce7;color:#166534;font-size:11px;padding:1px 6px;border-radius:10px;font-weight:600;">high</span></td></tr><tr style="background:#f9fafb;"><td style="text-align:center;padding:5px 10px;font-size:12px;color:#9ca3af;">8</td><td style="padding:5px 10px;font-size:12px;font-family:monospace;white-space:nowrap;color:#374151;">TIMESTAMP_UNKNOWN</td><td style="padding:5px 10px;font-size:12px;white-space:nowrap;color:#374151;">FINDER_DESTINATION_RECORDED</td><td style="padding:5px 10px;font-size:12px;color:#374151;word-break:break-word;max-width:500px;">file:///Users/student/Desktop/UMass_Confidential/CS480_FinalProject_Draft_v3.pdf</td><td style="padding:5px 10px;text-align:center;"><span style="background:#dcfce7;color:#166534;font-size:11px;padding:1px 6px;border-radius:10px;font-weight:600;">high</span></td></tr><tr style="background:#ffffff;"><td style="text-align:center;padding:5px 10px;font-size:12px;color:#9ca3af;">9</td><td style="padding:5px 10px;font-size:12px;font-family:monospace;white-space:nowrap;color:#374151;">TIMESTAMP_UNKNOWN</td><td style="padding:5px 10px;font-size:12px;white-space:nowrap;color:#374151;">FINDER_DESTINATION_RECORDED</td><td style="padding:5px 10px;font-size:12px;color:#374151;word-break:break-word;max-width:500px;">file:///Volumes/</td><td style="padding:5px 10px;text-align:center;"><span style="background:#dcfce7;color:#166534;font-size:11px;padding:1px 6px;border-radius:10px;font-weight:600;">high</span></td></tr><tr style="background:#f9fafb;"><td style="text-align:center;padding:5px 10px;font-size:12px;color:#9ca3af;">10</td><td style="padding:5px 10px;font-size:12px;font-family:monospace;white-space:nowrap;color:#374151;">TIMESTAMP_UNKNOWN</td><td style="padding:5px 10px;font-size:12px;white-space:nowrap;color:#374151;">FINDER_DESTINATION_RECORDED</td><td style="padding:5px 10px;font-size:12px;color:#374151;word-break:break-word;max-width:500px;">file:///Users/student/</td><td style="padding:5px 10px;text-align:center;"><span style="background:#dcfce7;color:#166534;font-size:11px;padding:1px 6px;border-radius:10px;font-weight:600;">high</span></td></tr></tbody></table></div>
+  </div>
+</div>
+
+  </div>
+</div>
+
+
+<div style="margin-bottom:12px;border:1px solid #e5e7eb;border-radius:8px;overflow:hidden;">
+  <button
+    onclick="toggleSection('src_3', 'srcchev_3')"
+    style="width:100%;text-align:left;background:#fff;border:none;padding:14px 16px;
+           cursor:pointer;display:flex;align-items:center;gap:12px;"
+  >
+    <span id="srcchev_3"
+          style="font-size:12px;color:#a78bfa;transition:transform .15s;">&#9654;</span>
+    <span style="width:12px;height:12px;border-radius:3px;background:#a78bfa;
+                 flex-shrink:0;"></span>
+    <span style="flex:1;font-size:15px;font-weight:600;color:#111827;">shell_history</span>
+    <span style="background:#a78bfa22;color:#a78bfa;font-size:12px;
+                 padding:2px 10px;border-radius:12px;font-weight:700;">10 rows</span>
+    <span style="font-size:12px;color:#9ca3af;margin-left:4px;">
+      1 event type
+    </span>
+  </button>
+  <div id="src_3" style="display:none;padding:12px 16px 12px 16px;
+       border-top:1px solid #f3f4f6;">
+    
+<div style="margin-bottom:8px;">
+  <button
+    onclick="toggleSection('tbl_7', 'tog_7')"
+    style="width:100%;text-align:left;background:#f3f4f6;border:1px solid #e5e7eb;
+           border-radius:6px;padding:8px 12px;cursor:pointer;display:flex;
+           align-items:center;gap:8px;font-size:13px;font-weight:500;color:#374151;"
+  >
+    <span id="tog_7" style="font-size:10px;transition:transform .15s;">&#9654;</span>
+    <span style="flex:1;">SHELL_COPY_CMD</span>
+    <span style="background:#e5e7eb;color:#6b7280;font-size:11px;
+                 padding:1px 8px;border-radius:10px;font-weight:600;">10</span>
+  </button>
+  <div id="tbl_7" style="display:none;margin-top:4px;border:1px solid #e5e7eb;
+       border-radius:0 0 6px 6px;overflow:hidden;">
+    <div style="overflow-x:auto;"><table style="width:100%;border-collapse:collapse;font-size:13px;"><thead><tr><th style="width:40px;text-align:center;white-space:nowrap;padding:6px 10px;border-bottom:2px solid #e5e7eb;font-size:12px;color:#6b7280;font-weight:600;">#</th><th style="width:190px;text-align:left;white-space:nowrap;padding:6px 10px;border-bottom:2px solid #e5e7eb;font-size:12px;color:#6b7280;font-weight:600;">Timestamp</th><th style="width:200px;text-align:left;white-space:nowrap;padding:6px 10px;border-bottom:2px solid #e5e7eb;font-size:12px;color:#6b7280;font-weight:600;">Event Type</th><th style="width:auto;text-align:left;white-space:nowrap;padding:6px 10px;border-bottom:2px solid #e5e7eb;font-size:12px;color:#6b7280;font-weight:600;">Detail</th><th style="width:90px;text-align:center;white-space:nowrap;padding:6px 10px;border-bottom:2px solid #e5e7eb;font-size:12px;color:#6b7280;font-weight:600;">Confidence</th></tr></thead><tbody><tr style="background:#ffffff;"><td style="text-align:center;padding:5px 10px;font-size:12px;color:#9ca3af;">1</td><td style="padding:5px 10px;font-size:12px;font-family:monospace;white-space:nowrap;color:#374151;">2026-04-10T10:04:55-0400</td><td style="padding:5px 10px;font-size:12px;white-space:nowrap;color:#374151;">SHELL_COPY_CMD</td><td style="padding:5px 10px;font-size:12px;color:#374151;word-break:break-word;max-width:500px;">cp -r /Users/student/Desktop/UMass_Confidential /Volumes/KINGSTON/</td><td style="padding:5px 10px;text-align:center;"><span style="background:#dcfce7;color:#166534;font-size:11px;padding:1px 6px;border-radius:10px;font-weight:600;">high</span></td></tr><tr style="background:#f9fafb;"><td style="text-align:center;padding:5px 10px;font-size:12px;color:#9ca3af;">2</td><td style="padding:5px 10px;font-size:12px;font-family:monospace;white-space:nowrap;color:#374151;">2026-04-10T10:05:30-0400</td><td style="padding:5px 10px;font-size:12px;white-space:nowrap;color:#374151;">SHELL_COPY_CMD</td><td style="padding:5px 10px;font-size:12px;color:#374151;word-break:break-word;max-width:500px;">ls /Volumes/KINGSTON/</td><td style="padding:5px 10px;text-align:center;"><span style="background:#dcfce7;color:#166534;font-size:11px;padding:1px 6px;border-radius:10px;font-weight:600;">high</span></td></tr><tr style="background:#ffffff;"><td style="text-align:center;padding:5px 10px;font-size:12px;color:#9ca3af;">3</td><td style="padding:5px 10px;font-size:12px;font-family:monospace;white-space:nowrap;color:#374151;">2026-04-10T10:05:31-0400</td><td style="padding:5px 10px;font-size:12px;white-space:nowrap;color:#374151;">SHELL_COPY_CMD</td><td style="padding:5px 10px;font-size:12px;color:#374151;word-break:break-word;max-width:500px;">ls /Volumes/KINGSTON/UMass_Confidential/</td><td style="padding:5px 10px;text-align:center;"><span style="background:#dcfce7;color:#166534;font-size:11px;padding:1px 6px;border-radius:10px;font-weight:600;">high</span></td></tr><tr style="background:#f9fafb;"><td style="text-align:center;padding:5px 10px;font-size:12px;color:#9ca3af;">4</td><td style="padding:5px 10px;font-size:12px;font-family:monospace;white-space:nowrap;color:#374151;">2026-04-10T10:05:32-0400</td><td style="padding:5px 10px;font-size:12px;white-space:nowrap;color:#374151;">SHELL_COPY_CMD</td><td style="padding:5px 10px;font-size:12px;color:#374151;word-break:break-word;max-width:500px;">du -sh /Volumes/KINGSTON/UMass_Confidential</td><td style="padding:5px 10px;text-align:center;"><span style="background:#dcfce7;color:#166534;font-size:11px;padding:1px 6px;border-radius:10px;font-weight:600;">high</span></td></tr><tr style="background:#ffffff;"><td style="text-align:center;padding:5px 10px;font-size:12px;color:#9ca3af;">5</td><td style="padding:5px 10px;font-size:12px;font-family:monospace;white-space:nowrap;color:#374151;">2026-04-10T10:28:35-0400</td><td style="padding:5px 10px;font-size:12px;white-space:nowrap;color:#374151;">SHELL_COPY_CMD</td><td style="padding:5px 10px;font-size:12px;color:#374151;word-break:break-word;max-width:500px;">diskutil unmount /Volumes/KINGSTON</td><td style="padding:5px 10px;text-align:center;"><span style="background:#dcfce7;color:#166534;font-size:11px;padding:1px 6px;border-radius:10px;font-weight:600;">high</span></td></tr><tr style="background:#f9fafb;"><td style="text-align:center;padding:5px 10px;font-size:12px;color:#9ca3af;">6</td><td style="padding:5px 10px;font-size:12px;font-family:monospace;white-space:nowrap;color:#374151;">TIMESTAMP_UNKNOWN</td><td style="padding:5px 10px;font-size:12px;white-space:nowrap;color:#374151;">SHELL_COPY_CMD</td><td style="padding:5px 10px;font-size:12px;color:#374151;word-break:break-word;max-width:500px;">cd /Users/student/Desktop</td><td style="padding:5px 10px;text-align:center;"><span style="background:#fef3c7;color:#92400e;font-size:11px;padding:1px 6px;border-radius:10px;font-weight:600;">medium</span></td></tr><tr style="background:#ffffff;"><td style="text-align:center;padding:5px 10px;font-size:12px;color:#9ca3af;">7</td><td style="padding:5px 10px;font-size:12px;font-family:monospace;white-space:nowrap;color:#374151;">TIMESTAMP_UNKNOWN</td><td style="padding:5px 10px;font-size:12px;white-space:nowrap;color:#374151;">SHELL_COPY_CMD</td><td style="padding:5px 10px;font-size:12px;color:#374151;word-break:break-word;max-width:500px;">open /Users/student/Desktop/UMass_Confidential</td><td style="padding:5px 10px;text-align:center;"><span style="background:#fef3c7;color:#92400e;font-size:11px;padding:1px 6px;border-radius:10px;font-weight:600;">medium</span></td></tr><tr style="background:#f9fafb;"><td style="text-align:center;padding:5px 10px;font-size:12px;color:#9ca3af;">8</td><td style="padding:5px 10px;font-size:12px;font-family:monospace;white-space:nowrap;color:#374151;">TIMESTAMP_UNKNOWN</td><td style="padding:5px 10px;font-size:12px;white-space:nowrap;color:#374151;">SHELL_COPY_CMD</td><td style="padding:5px 10px;font-size:12px;color:#374151;word-break:break-word;max-width:500px;">cp Financial_Aid_Award_Spring2026.xlsx /tmp/</td><td style="padding:5px 10px;text-align:center;"><span style="background:#fef3c7;color:#92400e;font-size:11px;padding:1px 6px;border-radius:10px;font-weight:600;">medium</span></td></tr><tr style="background:#ffffff;"><td style="text-align:center;padding:5px 10px;font-size:12px;color:#9ca3af;">9</td><td style="padding:5px 10px;font-size:12px;font-family:monospace;white-space:nowrap;color:#374151;">TIMESTAMP_UNKNOWN</td><td style="padding:5px 10px;font-size:12px;white-space:nowrap;color:#374151;">SHELL_COPY_CMD</td><td style="padding:5px 10px;font-size:12px;color:#374151;word-break:break-word;max-width:500px;">history | grep KINGSTON</td><td style="padding:5px 10px;text-align:center;"><span style="background:#fef3c7;color:#92400e;font-size:11px;padding:1px 6px;border-radius:10px;font-weight:600;">medium</span></td></tr><tr style="background:#f9fafb;"><td style="text-align:center;padding:5px 10px;font-size:12px;color:#9ca3af;">10</td><td style="padding:5px 10px;font-size:12px;font-family:monospace;white-space:nowrap;color:#374151;">TIMESTAMP_UNKNOWN</td><td style="padding:5px 10px;font-size:12px;white-space:nowrap;color:#374151;">SHELL_COPY_CMD</td><td style="padding:5px 10px;font-size:12px;color:#374151;word-break:break-word;max-width:500px;">ls /Volumes/</td><td style="padding:5px 10px;text-align:center;"><span style="background:#fef3c7;color:#92400e;font-size:11px;padding:1px 6px;border-radius:10px;font-weight:600;">medium</span></td></tr></tbody></table></div>
+  </div>
+</div>
+
+  </div>
+</div>
+
+
+<div style="margin-bottom:12px;border:1px solid #e5e7eb;border-radius:8px;overflow:hidden;">
+  <button
+    onclick="toggleSection('src_4', 'srcchev_4')"
+    style="width:100%;text-align:left;background:#fff;border:none;padding:14px 16px;
+           cursor:pointer;display:flex;align-items:center;gap:12px;"
+  >
+    <span id="srcchev_4"
+          style="font-size:12px;color:#4f9cf9;transition:transform .15s;">&#9654;</span>
+    <span style="width:12px;height:12px;border-radius:3px;background:#4f9cf9;
+                 flex-shrink:0;"></span>
+    <span style="flex:1;font-size:15px;font-weight:600;color:#111827;">usb_log</span>
+    <span style="background:#4f9cf922;color:#4f9cf9;font-size:12px;
+                 padding:2px 10px;border-radius:12px;font-weight:700;">10 rows</span>
+    <span style="font-size:12px;color:#9ca3af;margin-left:4px;">
+      5 event types
+    </span>
+  </button>
+  <div id="src_4" style="display:none;padding:12px 16px 12px 16px;
+       border-top:1px solid #f3f4f6;">
+    
+<div style="margin-bottom:8px;">
+  <button
+    onclick="toggleSection('tbl_8', 'tog_8')"
+    style="width:100%;text-align:left;background:#f3f4f6;border:1px solid #e5e7eb;
+           border-radius:6px;padding:8px 12px;cursor:pointer;display:flex;
+           align-items:center;gap:8px;font-size:13px;font-weight:500;color:#374151;"
+  >
+    <span id="tog_8" style="font-size:10px;transition:transform .15s;">&#9654;</span>
+    <span style="flex:1;">USB_DEVICE_CONNECT</span>
+    <span style="background:#e5e7eb;color:#6b7280;font-size:11px;
+                 padding:1px 8px;border-radius:10px;font-weight:600;">2</span>
+  </button>
+  <div id="tbl_8" style="display:none;margin-top:4px;border:1px solid #e5e7eb;
+       border-radius:0 0 6px 6px;overflow:hidden;">
+    <div style="overflow-x:auto;"><table style="width:100%;border-collapse:collapse;font-size:13px;"><thead><tr><th style="width:40px;text-align:center;white-space:nowrap;padding:6px 10px;border-bottom:2px solid #e5e7eb;font-size:12px;color:#6b7280;font-weight:600;">#</th><th style="width:190px;text-align:left;white-space:nowrap;padding:6px 10px;border-bottom:2px solid #e5e7eb;font-size:12px;color:#6b7280;font-weight:600;">Timestamp</th><th style="width:200px;text-align:left;white-space:nowrap;padding:6px 10px;border-bottom:2px solid #e5e7eb;font-size:12px;color:#6b7280;font-weight:600;">Event Type</th><th style="width:auto;text-align:left;white-space:nowrap;padding:6px 10px;border-bottom:2px solid #e5e7eb;font-size:12px;color:#6b7280;font-weight:600;">Detail</th><th style="width:90px;text-align:center;white-space:nowrap;padding:6px 10px;border-bottom:2px solid #e5e7eb;font-size:12px;color:#6b7280;font-weight:600;">Confidence</th></tr></thead><tbody><tr style="background:#ffffff;"><td style="text-align:center;padding:5px 10px;font-size:12px;color:#9ca3af;">1</td><td style="padding:5px 10px;font-size:12px;font-family:monospace;white-space:nowrap;color:#374151;">2026-04-10T10:02:09-0400</td><td style="padding:5px 10px;font-size:12px;white-space:nowrap;color:#374151;">USB_DEVICE_CONNECT</td><td style="padding:5px 10px;font-size:12px;color:#374151;word-break:break-word;max-width:500px;">Kingston DataTraveler 3.0 detected (Vendor 0x0951, Product 0x1666)</td><td style="padding:5px 10px;text-align:center;"><span style="background:#dcfce7;color:#166534;font-size:11px;padding:1px 6px;border-radius:10px;font-weight:600;">high</span></td></tr><tr style="background:#f9fafb;"><td style="text-align:center;padding:5px 10px;font-size:12px;color:#9ca3af;">2</td><td style="padding:5px 10px;font-size:12px;font-family:monospace;white-space:nowrap;color:#374151;">2026-04-10T10:02:11-0400</td><td style="padding:5px 10px;font-size:12px;white-space:nowrap;color:#374151;">USB_DEVICE_CONNECT</td><td style="padding:5px 10px;font-size:12px;color:#374151;word-break:break-word;max-width:500px;">AppleUSBHostPort::cableChangeOccurred: powering on</td><td style="padding:5px 10px;text-align:center;"><span style="background:#dcfce7;color:#166534;font-size:11px;padding:1px 6px;border-radius:10px;font-weight:600;">high</span></td></tr></tbody></table></div>
+  </div>
+</div>
+
+
+<div style="margin-bottom:8px;">
+  <button
+    onclick="toggleSection('tbl_9', 'tog_9')"
+    style="width:100%;text-align:left;background:#f3f4f6;border:1px solid #e5e7eb;
+           border-radius:6px;padding:8px 12px;cursor:pointer;display:flex;
+           align-items:center;gap:8px;font-size:13px;font-weight:500;color:#374151;"
+  >
+    <span id="tog_9" style="font-size:10px;transition:transform .15s;">&#9654;</span>
+    <span style="flex:1;">USB_DEVICE_DISCONNECT</span>
+    <span style="background:#e5e7eb;color:#6b7280;font-size:11px;
+                 padding:1px 8px;border-radius:10px;font-weight:600;">1</span>
+  </button>
+  <div id="tbl_9" style="display:none;margin-top:4px;border:1px solid #e5e7eb;
+       border-radius:0 0 6px 6px;overflow:hidden;">
+    <div style="overflow-x:auto;"><table style="width:100%;border-collapse:collapse;font-size:13px;"><thead><tr><th style="width:40px;text-align:center;white-space:nowrap;padding:6px 10px;border-bottom:2px solid #e5e7eb;font-size:12px;color:#6b7280;font-weight:600;">#</th><th style="width:190px;text-align:left;white-space:nowrap;padding:6px 10px;border-bottom:2px solid #e5e7eb;font-size:12px;color:#6b7280;font-weight:600;">Timestamp</th><th style="width:200px;text-align:left;white-space:nowrap;padding:6px 10px;border-bottom:2px solid #e5e7eb;font-size:12px;color:#6b7280;font-weight:600;">Event Type</th><th style="width:auto;text-align:left;white-space:nowrap;padding:6px 10px;border-bottom:2px solid #e5e7eb;font-size:12px;color:#6b7280;font-weight:600;">Detail</th><th style="width:90px;text-align:center;white-space:nowrap;padding:6px 10px;border-bottom:2px solid #e5e7eb;font-size:12px;color:#6b7280;font-weight:600;">Confidence</th></tr></thead><tbody><tr style="background:#ffffff;"><td style="text-align:center;padding:5px 10px;font-size:12px;color:#9ca3af;">1</td><td style="padding:5px 10px;font-size:12px;font-family:monospace;white-space:nowrap;color:#374151;">2026-04-10T10:28:44-0400</td><td style="padding:5px 10px;font-size:12px;white-space:nowrap;color:#374151;">USB_DEVICE_DISCONNECT</td><td style="padding:5px 10px;font-size:12px;color:#374151;word-break:break-word;max-width:500px;">Kingston DataTraveler 3.0 removed</td><td style="padding:5px 10px;text-align:center;"><span style="background:#dcfce7;color:#166534;font-size:11px;padding:1px 6px;border-radius:10px;font-weight:600;">high</span></td></tr></tbody></table></div>
+  </div>
+</div>
+
+
+<div style="margin-bottom:8px;">
+  <button
+    onclick="toggleSection('tbl_10', 'tog_10')"
+    style="width:100%;text-align:left;background:#f3f4f6;border:1px solid #e5e7eb;
+           border-radius:6px;padding:8px 12px;cursor:pointer;display:flex;
+           align-items:center;gap:8px;font-size:13px;font-weight:500;color:#374151;"
+  >
+    <span id="tog_10" style="font-size:10px;transition:transform .15s;">&#9654;</span>
+    <span style="flex:1;">USB_LOG_EVENT</span>
+    <span style="background:#e5e7eb;color:#6b7280;font-size:11px;
+                 padding:1px 8px;border-radius:10px;font-weight:600;">5</span>
+  </button>
+  <div id="tbl_10" style="display:none;margin-top:4px;border:1px solid #e5e7eb;
+       border-radius:0 0 6px 6px;overflow:hidden;">
+    <div style="overflow-x:auto;"><table style="width:100%;border-collapse:collapse;font-size:13px;"><thead><tr><th style="width:40px;text-align:center;white-space:nowrap;padding:6px 10px;border-bottom:2px solid #e5e7eb;font-size:12px;color:#6b7280;font-weight:600;">#</th><th style="width:190px;text-align:left;white-space:nowrap;padding:6px 10px;border-bottom:2px solid #e5e7eb;font-size:12px;color:#6b7280;font-weight:600;">Timestamp</th><th style="width:200px;text-align:left;white-space:nowrap;padding:6px 10px;border-bottom:2px solid #e5e7eb;font-size:12px;color:#6b7280;font-weight:600;">Event Type</th><th style="width:auto;text-align:left;white-space:nowrap;padding:6px 10px;border-bottom:2px solid #e5e7eb;font-size:12px;color:#6b7280;font-weight:600;">Detail</th><th style="width:90px;text-align:center;white-space:nowrap;padding:6px 10px;border-bottom:2px solid #e5e7eb;font-size:12px;color:#6b7280;font-weight:600;">Confidence</th></tr></thead><tbody><tr style="background:#ffffff;"><td style="text-align:center;padding:5px 10px;font-size:12px;color:#9ca3af;">1</td><td style="padding:5px 10px;font-size:12px;font-family:monospace;white-space:nowrap;color:#374151;">2026-04-10T10:02:10-0400</td><td style="padding:5px 10px;font-size:12px;white-space:nowrap;color:#374151;">USB_LOG_EVENT</td><td style="padding:5px 10px;font-size:12px;color:#374151;word-break:break-word;max-width:500px;">DiskArbitration: new device disk2 appeared</td><td style="padding:5px 10px;text-align:center;"><span style="background:#dcfce7;color:#166534;font-size:11px;padding:1px 6px;border-radius:10px;font-weight:600;">high</span></td></tr><tr style="background:#f9fafb;"><td style="text-align:center;padding:5px 10px;font-size:12px;color:#9ca3af;">2</td><td style="padding:5px 10px;font-size:12px;font-family:monospace;white-space:nowrap;color:#374151;">2026-04-10T10:02:12-0400</td><td style="padding:5px 10px;font-size:12px;white-space:nowrap;color:#374151;">USB_LOG_EVENT</td><td style="padding:5px 10px;font-size:12px;color:#374151;word-break:break-word;max-width:500px;">IOUSBDeviceFamily: device enumerated on Port-USB-C@4</td><td style="padding:5px 10px;text-align:center;"><span style="background:#dcfce7;color:#166534;font-size:11px;padding:1px 6px;border-radius:10px;font-weight:600;">high</span></td></tr><tr style="background:#ffffff;"><td style="text-align:center;padding:5px 10px;font-size:12px;color:#9ca3af;">3</td><td style="padding:5px 10px;font-size:12px;font-family:monospace;white-space:nowrap;color:#374151;">2026-04-10T10:05:30-0400</td><td style="padding:5px 10px;font-size:12px;white-space:nowrap;color:#374151;">USB_LOG_EVENT</td><td style="padding:5px 10px;font-size:12px;color:#374151;word-break:break-word;max-width:500px;">DiskArbitration: activity on /Volumes/KINGSTON</td><td style="padding:5px 10px;text-align:center;"><span style="background:#dcfce7;color:#166534;font-size:11px;padding:1px 6px;border-radius:10px;font-weight:600;">high</span></td></tr><tr style="background:#f9fafb;"><td style="text-align:center;padding:5px 10px;font-size:12px;color:#9ca3af;">4</td><td style="padding:5px 10px;font-size:12px;font-family:monospace;white-space:nowrap;color:#374151;">2026-04-10T10:28:38-0400</td><td style="padding:5px 10px;font-size:12px;white-space:nowrap;color:#374151;">USB_LOG_EVENT</td><td style="padding:5px 10px;font-size:12px;color:#374151;word-break:break-word;max-width:500px;">DiskArbitration: volume KINGSTON will unmount</td><td style="padding:5px 10px;text-align:center;"><span style="background:#dcfce7;color:#166534;font-size:11px;padding:1px 6px;border-radius:10px;font-weight:600;">high</span></td></tr><tr style="background:#ffffff;"><td style="text-align:center;padding:5px 10px;font-size:12px;color:#9ca3af;">5</td><td style="padding:5px 10px;font-size:12px;font-family:monospace;white-space:nowrap;color:#374151;">2026-04-10T10:28:43-0400</td><td style="padding:5px 10px;font-size:12px;white-space:nowrap;color:#374151;">USB_LOG_EVENT</td><td style="padding:5px 10px;font-size:12px;color:#374151;word-break:break-word;max-width:500px;">DiskArbitration: disk2 disappeared</td><td style="padding:5px 10px;text-align:center;"><span style="background:#dcfce7;color:#166534;font-size:11px;padding:1px 6px;border-radius:10px;font-weight:600;">high</span></td></tr></tbody></table></div>
+  </div>
+</div>
+
+
+<div style="margin-bottom:8px;">
+  <button
+    onclick="toggleSection('tbl_11', 'tog_11')"
+    style="width:100%;text-align:left;background:#f3f4f6;border:1px solid #e5e7eb;
+           border-radius:6px;padding:8px 12px;cursor:pointer;display:flex;
+           align-items:center;gap:8px;font-size:13px;font-weight:500;color:#374151;"
+  >
+    <span id="tog_11" style="font-size:10px;transition:transform .15s;">&#9654;</span>
+    <span style="flex:1;">VOLUME_MOUNT</span>
+    <span style="background:#e5e7eb;color:#6b7280;font-size:11px;
+                 padding:1px 8px;border-radius:10px;font-weight:600;">1</span>
+  </button>
+  <div id="tbl_11" style="display:none;margin-top:4px;border:1px solid #e5e7eb;
+       border-radius:0 0 6px 6px;overflow:hidden;">
+    <div style="overflow-x:auto;"><table style="width:100%;border-collapse:collapse;font-size:13px;"><thead><tr><th style="width:40px;text-align:center;white-space:nowrap;padding:6px 10px;border-bottom:2px solid #e5e7eb;font-size:12px;color:#6b7280;font-weight:600;">#</th><th style="width:190px;text-align:left;white-space:nowrap;padding:6px 10px;border-bottom:2px solid #e5e7eb;font-size:12px;color:#6b7280;font-weight:600;">Timestamp</th><th style="width:200px;text-align:left;white-space:nowrap;padding:6px 10px;border-bottom:2px solid #e5e7eb;font-size:12px;color:#6b7280;font-weight:600;">Event Type</th><th style="width:auto;text-align:left;white-space:nowrap;padding:6px 10px;border-bottom:2px solid #e5e7eb;font-size:12px;color:#6b7280;font-weight:600;">Detail</th><th style="width:90px;text-align:center;white-space:nowrap;padding:6px 10px;border-bottom:2px solid #e5e7eb;font-size:12px;color:#6b7280;font-weight:600;">Confidence</th></tr></thead><tbody><tr style="background:#ffffff;"><td style="text-align:center;padding:5px 10px;font-size:12px;color:#9ca3af;">1</td><td style="padding:5px 10px;font-size:12px;font-family:monospace;white-space:nowrap;color:#374151;">2026-04-10T10:02:13-0400</td><td style="padding:5px 10px;font-size:12px;white-space:nowrap;color:#374151;">VOLUME_MOUNT</td><td style="padding:5px 10px;font-size:12px;color:#374151;word-break:break-word;max-width:500px;">/Volumes/KINGSTON mounted (FAT32)</td><td style="padding:5px 10px;text-align:center;"><span style="background:#dcfce7;color:#166534;font-size:11px;padding:1px 6px;border-radius:10px;font-weight:600;">high</span></td></tr></tbody></table></div>
+  </div>
+</div>
+
+
+<div style="margin-bottom:8px;">
+  <button
+    onclick="toggleSection('tbl_12', 'tog_12')"
+    style="width:100%;text-align:left;background:#f3f4f6;border:1px solid #e5e7eb;
+           border-radius:6px;padding:8px 12px;cursor:pointer;display:flex;
+           align-items:center;gap:8px;font-size:13px;font-weight:500;color:#374151;"
+  >
+    <span id="tog_12" style="font-size:10px;transition:transform .15s;">&#9654;</span>
+    <span style="flex:1;">VOLUME_UNMOUNT</span>
+    <span style="background:#e5e7eb;color:#6b7280;font-size:11px;
+                 padding:1px 8px;border-radius:10px;font-weight:600;">1</span>
+  </button>
+  <div id="tbl_12" style="display:none;margin-top:4px;border:1px solid #e5e7eb;
+       border-radius:0 0 6px 6px;overflow:hidden;">
+    <div style="overflow-x:auto;"><table style="width:100%;border-collapse:collapse;font-size:13px;"><thead><tr><th style="width:40px;text-align:center;white-space:nowrap;padding:6px 10px;border-bottom:2px solid #e5e7eb;font-size:12px;color:#6b7280;font-weight:600;">#</th><th style="width:190px;text-align:left;white-space:nowrap;padding:6px 10px;border-bottom:2px solid #e5e7eb;font-size:12px;color:#6b7280;font-weight:600;">Timestamp</th><th style="width:200px;text-align:left;white-space:nowrap;padding:6px 10px;border-bottom:2px solid #e5e7eb;font-size:12px;color:#6b7280;font-weight:600;">Event Type</th><th style="width:auto;text-align:left;white-space:nowrap;padding:6px 10px;border-bottom:2px solid #e5e7eb;font-size:12px;color:#6b7280;font-weight:600;">Detail</th><th style="width:90px;text-align:center;white-space:nowrap;padding:6px 10px;border-bottom:2px solid #e5e7eb;font-size:12px;color:#6b7280;font-weight:600;">Confidence</th></tr></thead><tbody><tr style="background:#ffffff;"><td style="text-align:center;padding:5px 10px;font-size:12px;color:#9ca3af;">1</td><td style="padding:5px 10px;font-size:12px;font-family:monospace;white-space:nowrap;color:#374151;">2026-04-10T10:28:40-0400</td><td style="padding:5px 10px;font-size:12px;white-space:nowrap;color:#374151;">VOLUME_UNMOUNT</td><td style="padding:5px 10px;font-size:12px;color:#374151;word-break:break-word;max-width:500px;">/Volumes/KINGSTON unmounted cleanly</td><td style="padding:5px 10px;text-align:center;"><span style="background:#dcfce7;color:#166534;font-size:11px;padding:1px 6px;border-radius:10px;font-weight:600;">high</span></td></tr></tbody></table></div>
+  </div>
+</div>
+
+  </div>
+</div>
+
+
+  <p style="margin-top:32px;font-size:11px;color:#d1d5db;text-align:center;">
+    Demo timeline viewer &mdash; all 50 rows from timeline_demo.csv — synthetic demo rows for GitHub (10 per source).
+  </p>
+
+  <script>
+function toggleSection(bodyId, chevId) {
+  const body = document.getElementById(bodyId);
+  const chev = document.getElementById(chevId);
+  const isOpen = body.style.display !== 'none';
+  body.style.display = isOpen ? 'none' : 'block';
+  chev.style.transform = isOpen ? '' : 'rotate(90deg)';
+}
+
+function filterRows(query) {
+  const q = query.trim().toLowerCase();
+  const allRows = document.querySelectorAll('tbody tr');
+  let matchCount = 0;
+  allRows.forEach(tr => {
+    const text = tr.textContent.toLowerCase();
+    const visible = !q || text.includes(q);
+    tr.style.display = visible ? '' : 'none';
+    if (visible) matchCount++;
+  });
+  const countEl = document.getElementById('matchCount');
+  if (q) {
+    countEl.textContent = matchCount.toLocaleString() + ' row' + (matchCount !== 1 ? 's' : '') + ' matched';
+  } else {
+    countEl.textContent = '';
+  }
+}
+
+function expandAll() {
+  document.querySelectorAll('[id^="src_"], [id^="tbl_"]').forEach(el => {
+    el.style.display = 'block';
+  });
+  document.querySelectorAll('[id^="srcchev_"], [id^="tog_"]').forEach(el => {
+    el.style.transform = 'rotate(90deg)';
+  });
+}
+
+function collapseAll() {
+  document.querySelectorAll('[id^="src_"], [id^="tbl_"]').forEach(el => {
+    el.style.display = 'none';
+  });
+  document.querySelectorAll('[id^="srcchev_"], [id^="tog_"]').forEach(el => {
+    el.style.transform = '';
+  });
+}
+</script>
+</body>
+</html>

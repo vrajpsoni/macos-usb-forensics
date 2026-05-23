@@ -28,7 +28,7 @@ def _build_file_specs() -> list[dict]:
         "% Student: [REDACTED FOR DEMO]\n"
         "% CONFIDENTIAL — For authorized recipients only\n"
         "% Do not copy or distribute without written consent\n"
-    ).encode("utf-8")
+    )
     thesis_pdf = (
         "%PDF-1.4\n"
         "1 0 obj\n<< /Type /Catalog >>\nendobj\n"
@@ -37,7 +37,7 @@ def _build_file_specs() -> list[dict]:
         "% USB Device Forensics and Activity Tracking on macOS\n"
         "% UMass Amherst, Spring 2026\n"
         "% STATUS: DO NOT DISTRIBUTE — unpublished student work\n"
-    ).encode("utf-8")
+    )
 
     return [
         {
@@ -69,12 +69,12 @@ def _build_file_specs() -> list[dict]:
         },
         {
             "name": "Official_Transcript_UMass_CONFIDENTIAL.pdf",
-            "content": transcript_pdf,
+            "content": transcript_pdf.encode(),
             "description": "Official academic transcript PDF (fake PDF header)",
         },
         {
             "name": "CS480_FinalProject_Draft_v3.pdf",
-            "content": thesis_pdf,
+            "content": thesis_pdf.encode(),
             "description": "CS 480 final project report draft (fake PDF header)",
         },
         {
